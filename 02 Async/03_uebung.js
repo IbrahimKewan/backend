@@ -41,43 +41,97 @@
 // getWeather(input);
 
 // #########################################################
-const prompt = require("prompt-sync")();
-const axios = require("axios");
+// const fs = require("fs").promises;
+// const axios = require("axios");
+// const prompt = require("prompt-sync")();
+
+// let input = prompt("Geben Sie Ihre staat: ");
+
+// async function writeApp(city) {
+//     try {
+//         const apiKey = "92336d91897e0b9a2463b16da539fced";
+//         const res = await axios.get(
+//             `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=de`
+//         );
+//         const data = res.data;
+//         const weather = data.weather[0];
+//         const iconUrl = `https://openweathermap.org/img/wn/${weather.icon}@2x.png`;
+
+//         const output = `
+//         // Automatisch generiert
+//         console.log('######################################################');
+//         console.log('Die eingegebene Stadt: ${city}');
+//         console.log('Temperatur: ${data.main.temp} °C');
+//         console.log('Wetter: ${weather.description}');
+//         console.log('Icon: ${iconUrl}');
+//         console.log('######################################################');
+//         `;
+//         await fs.writeFile("app.js", output);
+//         console.log("Daten würden erfolgreich geschrieben");
+//     } catch (err) {
+//         console.log("API Key ist falsch" + err);
+//     }
+// }
+
+// async function readApp() {
+//     try {
+//         const data = await fs.readFile("app.js", "utf-8");
+//         console.log(data);
+//     } catch (err) {
+//         console.log("Fehler beim lesen von daten... " + err);
+//     }
+// }
+
+// (async () => {
+//     await writeApp(input);
+//     await readApp();
+// })();
+// #########################################################
 const fs = require("fs").promises;
+const axios = require("axios");
+const prompt = require("prompt-sync")();
 
-let input = prompt("Geben Sie die Stadt ein: ");
+const input = prompt("Geben Sie ihre name: ");
 
-async function setAppJs(city) {
+let found = false;
+// write prfile.js
+async function writeProfile(person) {
     try {
-        const apiKey = "92336d91897e0b9a2463b16da539fced";
         const res = await axios.get(
-            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=de`
+            `https://jsonplaceholder.typicode.com/users?username=${person}`
         );
-        const apiData = res.data;
-        const wetter = apiData.weather[0];
-        const iconUrl = `https://openweathermap.org/img/wn/${wetter.icon}@2x.png`;
-
+        if (res.data.length === 0) {
+            console.log("Person nicht gefunden ...");
+            return;
+        }
+        found = true;
+        const output = res.data[0];
         const inhalt = `
-            //Wetterstation nach Ihre Wahl
-            console.log('Stadt: ${city}');
-            console.log('Temperatur: ${apiData.main.temp} - ${iconUrl}');
+            //*******************************************
+            *\tID: ${output.id}
+            *\tusername: ${output.username}
+            *\temail: ${output.email}
+            *\tAdresse: ${output.address.city}
+            //*******************************************
         `;
-        await fs.writeFile("app.js", inhalt, "utf-8");
+        await fs.writeFile("prfile.js", inhalt, "utf-8");
+        console.log("Datei würde erfolgreich geschrieben ... ");
     } catch (err) {
-        console.log("Fehler beim: " + err.message);
+        console.log("Fehler beim datei schreiben: " + err);
     }
 }
 
-async function getWeather() {
+// read data from profile.js
+async function readProfile() {
     try {
-        const data = await fs.readFile("app.js", "utf-8");
+        const data = await fs.readFile("prfile.js", "utf-8");
         console.log(data);
     } catch (err) {
-        console.log(err.massege);
+        console.log("Daten könnten nicht gelesen werden " + err);
     }
 }
 
 (async () => {
-    await setAppJs(input);
-    await getWeather();
+    await writeProfile(input);
+    if (found) await readProfile();
 })();
