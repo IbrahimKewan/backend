@@ -1,6 +1,7 @@
-/node_modules/
+node_modules/
 build/
 .env
 app.js
 logs/
 temp/
+Abrechnungen/ausgaben.json

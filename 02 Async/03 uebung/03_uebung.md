@@ -47,23 +47,63 @@
 
 ---
 
-## 🔵 **Level 4 – Promise-Kette & Datenverarbeitung**
+## ✅ **Level 4 – Promise-Kette & Datenverarbeitung (mit DummyJSON API)**
 
-### 🛍️ Aufgabe: **Benutzer → Bestellungen → Details**
+### 🛍️ **Aufgabe: Benutzer → Warenkörbe → Produktdetails**
 
-**Ziel:** Simuliere drei API-Aufrufe:
+### 🎯 Ziel:
 
-1. `getUser(id)` → liefert Userdaten
-2. `getOrders(userId)` → liefert Bestellungen
-3. `getOrderDetails(orderId)` → liefert Details zur ersten Bestellung
+Simuliere einen Online-Shop-Ablauf mit drei aufeinander aufbauenden API-Abfragen:
 
-✅ Konzepte:
+---
 
--   Promise-Kette mit `.then()`
--   Rückgabe von Promises
--   Modularisierung möglich
+### 📌 Schritte:
 
-🎯 Ziel: Zeige z. B. `Benutzer Max Mustermann hat 2 Bestellungen. Die erste enthält 3 Artikel.`
+1. **getUser(userId)**
+   → Liefert die Benutzerdaten (Vorname, Nachname)
+
+2. **getUserCarts(userId)**
+   → Liefert alle Bestellungen (Warenkörbe) dieses Benutzers
+
+3. **getCartDetails(cartId)**
+   → Liefert die Produktdetails der **ersten Bestellung** (Produkte & Mengen)
+
+---
+
+### ✅ Deine Aufgabe:
+
+1. Frage den Benutzer (z. B. über `prompt-sync`) nach einer `userId`
+2. Hole die Benutzerdaten von
+   `https://dummyjson.com/users/:id`
+3. Hole seine Warenkörbe von
+   `https://dummyjson.com/carts/user/:id`
+4. Analysiere die **erste Bestellung** (`carts[0]`)
+5. Gib z. B. folgende Ausgabe aus:
+
+```
+🧑 Benutzer: Terry Medhurst
+🛒 Bestellungen: 2
+📦 Erste Bestellung enthält 3 Artikel:
+    - "Spring and summershoes" (3x)
+    - "TC Reusable Silicone" (1x)
+    - "Women Shoulder Bag" (2x)
+```
+
+---
+
+### 🔁 Anforderungen:
+
+-   Verwende eine **Promise-Kette mit `.then()`**, nicht `async/await`
+-   Nutze **`axios`** für die API-Calls
+-   Baue eine **lesbare Ausgabe** der Produkttitel und Mengen
+-   Behandle Fehler sinnvoll (`catch`)
+
+---
+
+### 🧠 Bonus:
+
+-   Zähle und zeige: wie viele Produkte insgesamt in der ersten Bestellung sind (Summe der Mengen)
+-   Zeige auch den Gesamtpreis (`total`) der Bestellung
 
 ---
 
@@ -88,3 +128,24 @@
 📎 Bonus: Logge, wie viele Kontakte erfolgreich gesendet wurden.
 
 ---
+
+### 🧩 **Projektidee: Mini-Benutzerdatenbank**
+
+-   Der Nutzer gibt einen Namen ein
+-   Du holst Benutzerdaten per API
+-   Du speicherst sie als `benutzer_<name>.json`
+-   Wenn die Datei schon existiert → lies sie stattdessen
+-   Zeige dem Nutzer, ob die Daten **neu geholt** oder **aus der Datei gelesen** wurden
+
+---
+
+## 🧠 **Was du jetzt bereits kannst (Stärken):**
+
+| Thema                  | Dein Stand                                      |
+| ---------------------- | ----------------------------------------------- |
+| ✅ `axios`             | HTTP-Requests machen und Daten verarbeiten      |
+| ✅ `fs.promises`       | Dateien lesen & schreiben (Text, JS-Code)       |
+| ✅ `async/await`       | Asynchrone Logik sauber strukturiert            |
+| ✅ Fehlerbehandlung    | Mit `try/catch` arbeiten                        |
+| ✅ Modulare Funktionen | Code in sinnvolle Abschnitte trennen            |
+| ✅ Konsolen-Ausgabe    | Ausgabe in Format bringen (z. B. `console.log`) |
