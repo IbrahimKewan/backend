@@ -78,6 +78,12 @@ async function main() {
     console.log(
         "---------------------------------------------------------------------------------"
     );
+    try {
+        await axios.post("https://ibrahimkewan.de", filter);
+        console.log("daten geschickt");
+    } catch (err) {
+        console.log("Daten konnten nicht hochgeldaden werden " + err);
+    }
 }
 
 main();
