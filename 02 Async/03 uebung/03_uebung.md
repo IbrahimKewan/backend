@@ -139,6 +139,61 @@ Simuliere einen Online-Shop-Ablauf mit drei aufeinander aufbauenden API-Abfragen
 
 ---
 
+Natürlich! Hier ist die Aufgabe – **klar, neu formuliert und auf CSV angepasst**:
+
+---
+
+## 🧪 **Level 6 – CSV: Produktdaten importieren**
+
+### 📥 **Aufgabe:**
+
+Du bekommst eine Datei namens `products.csv`, die Produktdaten enthält.
+Deine Aufgabe ist es:
+
+1. Die Datei **asynchron einlesen**
+2. Die Daten in **JavaScript-Objekte** umwandeln
+3. Nur Produkte mit einem **gültigen Preis** (größer als 0) behalten
+4. Jedes gültige Produkt mit `axios.post()` an einen API-Endpunkt senden:
+   → `https://example.com/api/products/import`
+5. Am Ende anzeigen, **wie viele Produkte erfolgreich gesendet wurden**
+
+---
+
+### ✅ **Technische Anforderungen:**
+
+-   Verwende `fs.promises.readFile` zum Einlesen der Datei
+-   Verarbeite CSV mit `.split("\n")` und `.split(",")`
+-   Verwende `filter` für gültige Produkte (`price > 0`)
+-   Nutze `axios` für den POST-Vorgang
+-   Verwende `async/await` und `try/catch` zur Fehlerbehandlung
+
+---
+
+### 📄 Beispielinhalt `products.csv`
+
+```csv
+id,name,price
+1,Tisch,99.99
+2,Stuhl,0
+3,Lampe,29.95
+4,Regal,-10
+5,Sofa,499.95
+```
+
+---
+
+### 🎯 Zielausgabe im Terminal:
+
+```
+✅ 3 Produkte wurden erfolgreich gesendet:
+📦 Tisch – €99.99
+📦 Lampe – €29.95
+📦 Sofa – €499.95
+❌ 2 ungültige Produkte übersprungen (Preis ≤ 0)
+```
+
+---
+
 ## 🧠 **Was du jetzt bereits kannst (Stärken):**
 
 | Thema                  | Dein Stand                                      |
