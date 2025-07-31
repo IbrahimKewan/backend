@@ -83,12 +83,12 @@ route.put("/:id", (req, res) => {
 // DELETE	/:id	Benutzer löschen
 route.delete("/:id", (req, res) => {
     const userID = parseInt(req.params.id);
-    const findUser = users.findIndex((user) => userID === user.id);
+    const findUser = users.findIndex((user) => user.id === userID);
     if (findUser >= 0) {
         users.splice(findUser, 1);
-        res.status(200).send(`Bentzer daten wurden erfolgreich gelöscht`);
+        return res.status(201).send("Benutzer daten wurden gelöscht");
     }
-    res.status(404).send("benutzer nicht gefunde ");
+    res.status(404).send("Benutzer wurde nicht gefunden ");
 });
 
 module.exports = route;
