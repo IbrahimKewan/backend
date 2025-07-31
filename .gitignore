@@ -1,5 +1,5 @@
 node_modules/
-mxpfu-nodejsLabs/
+/mxpfu-nodejsLabs/
 build/
 .env
 app.js
