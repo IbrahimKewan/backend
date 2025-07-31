@@ -1,0 +1,14 @@
+{
+  "name": "06-benutzerverwaltung",
+  "version": "1.0.0",
+  "description": "benutzerverwaltung App",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "author": "Ibrahim_Kewan",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
