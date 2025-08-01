@@ -30,6 +30,7 @@ let users = [
 
 // Alle benutzern anzeigen
 route.get("/", (req, res) => {
+    debugger;
     res.status(201).send(users);
 });
 
