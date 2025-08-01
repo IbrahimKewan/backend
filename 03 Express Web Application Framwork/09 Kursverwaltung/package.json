@@ -1,0 +1,17 @@
+{
+  "name": "09-kursverwaltung",
+  "version": "1.0.0",
+  "description": "Erstelle ein System zur **Kursverwaltung**, bei dem sich **Teilnehmer registrieren, einloggen** und **ihre Kurse sehen** können.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0"
+  }
+}
