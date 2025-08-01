@@ -1,0 +1,16 @@
+{
+    "name": "08-benutzerverwaltung_passwort",
+    "version": "1.0.0",
+    "description": "```\r benutzer-api/\r ├── index.js\r ├── package.json\r └── routes/\r     └── users.js\r ```",
+    "main": "index.js",
+    "scripts": {
+        "test": "node index.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^6.0.0",
+        "express": "^5.1.0"
+    }
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formular</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="form-wrapper">
+        <!-- Login-Formular -->
+        <div id="firstForm" class="form-container">
+            <form action="login" method="POST">
+                <h2 id="loginTitle">Login</h2>
+                <label for="loginNameInput">Name</label>
+                <input type="text" placeholder=" Benutzer Name eingeben" id="loginNameInput" name="username" required>
+                <label for="loginPassword">Passwort</label>
+                <input type="password" placeholder=" Passwort eingeben" id="loginPassword" name="password" required>
+                <div class="felherMeldung" id="felherMeldung"></div>
+                <div class="link">
+                    <a href="#" id="registierenLink">Registrieren</a>
+                    <a href="#" id="passwortVergessenLink">Passwort vergessen</a>
+                </div>
+                <button type="submit" onclick="login(event)">Anmelden</button>
+            </form>
+        </div>
+
+        <!-- Registrieren-Formular -->
+        <div id="secoundForm" class="form-container hidden">
+            <form action="register" method="POST">
+                <h2>Registrieren</h2>
+                
+                <!-- Name -->
+                <label for="registerNameInput">Name</label>
+                <input type="text" placeholder=" Benutzer Name eingeben" id="registerNameInput" name="username" required>
+
+                <label for="registerBirthDate">Geburtsdatum</label>
+                <input type="date" id="registerBirthDate" name="birthdate" required>
+                
+                <!-- E-Mail -->
+                <label for="registerEmail">E-Mail</label>
+                <input type="email" placeholder=" E-Mail eingeben" id="registerEmail" name="email" required>
+                
+                <!-- Telefonnummer -->
+                <label for="registerPhone">Telefonnummer</label>
+                <input type="tel" placeholder=" Telefonnummer eingeben" id="registerPhone" name="phone">
+                
+                <!-- Passwort -->
+                <label for="registerPassword">Passwort</label>
+                <input type="password" placeholder=" Passwort eingeben" id="registerPassword" name="password" oninput="checkPasswordStrength()" required>
+                <div id="passwordStrength"></div>
+                
+                <!-- Passwort bestätigen -->
+                <label for="confirmPassword">Passwort bestätigen</label>
+                <input type="password" placeholder=" Passwort erneut eingeben" id="confirmPassword" name="confirmPassword" required>
+                
+                <!-- Nutzungsbedingungen -->
+                <div class="checkbox">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">Ich stimme den Nutzungsbedingungen zu</label>
+                </div>
+                
+                <!-- Buttons -->
+                <button type="submit">Registrieren</button>
+                <button type="button" onclick="backHome(event)">Zurück zur Startseite</button>
+            </form>
+        </div>
+
+        <!-- Passwort-Vergessen-Formular -->
+        <div id="therdForm" class="form-container hidden">
+            <form action="forgotPassword" method="POST">
+                <h2>Passwort vergessen</h2>
+                <label for="forgotEmail">E-Mail</label>
+                <input type="email" placeholder=" E-Mail eingeben" id="forgotEmail" name="email" required>
+                <button type="submit">Passwort zurücksetzen</button>
+                <button type="submit" onclick="backHome(event)">Zurück zum Startseite</button>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
