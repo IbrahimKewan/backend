@@ -107,7 +107,7 @@ document
         }
 
         const newUser = { name, email, birthDay, password, kurse };
-        debugger;
+
         try {
             const res = await fetch(`${BASE_URL}/teilnehmer/register`, {
                 method: "POST",

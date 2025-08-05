@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Willkommen!</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body
+        class="bg-gradient-to-r from-blue-500 to-indigo-600 min-h-screen flex items-center justify-center text-white">
+        <div
+            class="bg-white bg-opacity-10 backdrop-blur-md p-10 rounded-2xl shadow-xl max-w-md w-full text-center">
+            <h1 class="text-4xl font-bold mb-4">
+                Willkommen zurück,
+                <span class="text-yellow-300" id="userName">[Benutzername]</span
+                >!
+            </h1>
+            <p class="text-lg mb-6">
+                Schön, dass du wieder da bist. Starte jetzt durch!
+            </p>
+
+            <div class="space-y-4">
+                <button
+                    class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded-xl transition">
+                    Dashboard öffnen
+                </button>
+                <button
+                    class="w-full bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-2 px-4 rounded-xl transition">
+                    Abmelden
+                </button>
+            </div>
+        </div>
+        <script>
+            const userName = localStorage.getItem("name");
+
+            if (userName) {
+                document.getElementById("userName").textContent = userName;
+            } else {
+                document.getElementById("userName").textContent = "Gast";
+            }
+        </script>
+    </body>
+</html>
