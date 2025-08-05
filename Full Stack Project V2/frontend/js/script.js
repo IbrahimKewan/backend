@@ -169,6 +169,7 @@ function checkPasswordStrength() {
     let length = 0;
 
     // Test@@KK!"§"123
+    // Ibra96@@KK!
     if (password.length >= 8) length++;
     if (/[A-Z]/.test(password)) length++;
     if (/[a-z]/.test(password)) length++;
