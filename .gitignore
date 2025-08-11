@@ -1,5 +1,8 @@
 node_modules/
 /mxpfu-nodejsLabs/
+/expressBookReviews/
+/09_Buchbewertung/
+/08_freundeListe/
 build/
 .env
 app.js
