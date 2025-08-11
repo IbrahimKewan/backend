@@ -73,7 +73,7 @@ router.get("/:id", (req, res) => {
     });
 });
 
-router.get("/:id/reviews", (req, res) => {
+router.post("/:id/reviews", (req, res) => {
     const filmID = req.params.id;
     const findFilm = films.find((f) => f.id === filmID);
     if (!findFilm) {
@@ -81,9 +81,44 @@ router.get("/:id/reviews", (req, res) => {
             message: "film id not found",
         });
     }
+
+    const username = req.session?.authorization?.username;
+    if (!username) {
+        return res.status(403).json({
+            message: "Nicht eingelogt",
+        });
+    }
+
+    let { rating, comment } = req.body;
+    rating = Number(rating);
+    if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+        return res.status(400).json({
+            message: "rating muss eine Zahl von 1 bis 5 sien",
+        });
+    }
+    if (comment !== undefined && typeof comment !== "string") {
+        return res.status(400).json({
+            message: "comment muss ein string sein",
+        });
+    }
+    comment = (comment || "").trim();
+    const already = findFilm.reviews.find((r) => r.user === username);
+    if (already) {
+        return res.status(409).json({
+            message:
+                "Du hast für deisen Film bereits eine Bewertung abgegeben !!",
+        });
+    }
+
+    findFilm.reviews.push({
+        user: username,
+        rating,
+        comment,
+    });
+
     return res.status(200).json({
-        message: "TEST",
-        film: findFilm,
+        message: "Bewertung hinzugefügt",
+        findFilm,
     });
 });
 
