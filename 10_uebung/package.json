@@ -12,5 +12,9 @@
     "license": "ISC",
     "dependencies": {
         "express-session": "^1.18.2"
+    },
+    "devDependencies": {
+        "jest": "^30.0.5",
+        "supertest": "^7.1.4"
     }
 }
