@@ -1,8 +1,3 @@
-const users = [
-    { username: "alice", password: "alice123", role: "user", favorites: [] },
-    { username: "bob", password: "bob123", role: "user", favorites: [] },
-];
-
 const recipes = [
     {
         id: "r1",
@@ -44,4 +39,4 @@ function avgRating(r) {
     return Math.round((sum / r.rating.length) * 10) / 10;
 }
 
-module.exports = { users, recipes, avgRating };
+module.exports = { recipes, avgRating };
