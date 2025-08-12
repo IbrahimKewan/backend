@@ -1,0 +1,28 @@
+{
+    "name": "11_kuch_buch",
+    "version": "1.0.0",
+    "description": "Du baust eine REST-API für Rezepte. Nutzer können sich registrieren/einloggen, Rezepte suchen/filtern, bewerten, kommentieren, favorisieren. Optional gibt’s Admin-Funktionen.",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js",
+        "test": "jest --runInBand",
+        "test:watch": "jest --watch"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "cros": "^1.1.0",
+        "dotenv": "^17.2.1",
+        "express": "^5.1.0",
+        "express-session": "^1.18.2",
+        "helmet": "^8.1.0",
+        "jsonwebtoken": "^9.0.2"
+    },
+    "devDependencies": {
+        "jest": "^30.0.5",
+        "nodemon": "^3.1.10",
+        "supertest": "^7.1.4"
+    }
+}
