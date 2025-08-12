@@ -1,9 +1,10 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
 const session = require("express-session");
+const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 const geheim = "test";
+
 let users = [
     {
         username: "test",
@@ -11,53 +12,99 @@ let users = [
     },
 ];
 
-router.get("/ping", (req, res) => res.send("users ping"));
-
-router.post("/register", (req, res) => {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-        return res.status(400).json({
-            message: "Benutzer name und password mussen eingegeben werden !!!",
-        });
-    }
-
-    const isExist = users.find((user) => user.username === username);
-    if (isExist) {
-        return res.status(409).json({
-            message: "Diese name ist schon vorhanden",
-        });
-    }
-
-    users.push({ username: username, password: password });
-    return res.status(201).json({
-        message: "Anmeldung erfolgreich :)",
-        username,
+// testing reouter
+router.get("/ping", (req, res) => {
+    return res.status(200).json({
+        message: "auth users PING",
     });
 });
 
-router.post("/login", (req, res) => {
+function userPassInput(user, pass) {
+    const u = typeof user === "string" ? user.trim() : "";
+    const p = typeof pass === "string" ? pass : "";
+
+    if (!u || !p) {
+        return {
+            ok: false,
+            status: 400,
+            message: "Benutzername und Passwort sind erforderlich.",
+        };
+    }
+
+    return {
+        ok: true,
+        username: u,
+        password: p,
+    };
+}
+
+// new user register
+router.post("/register", (req, res) => {
     const { username, password } = req.body;
 
-    const isValid = users.find(
-        (user) => user.username === username && user.password === password
-    );
-    if (!isValid) {
-        return res.status(401).json({
-            message: "password oder name ist falsch",
+    // password und username sind pflicht
+    const validierung = userPassInput(username, password);
+    if (!validierung.ok) {
+        return res.status(validierung.status).json({
+            message: validierung.message,
         });
     }
 
-    const token = jwt.sign({ username }, geheim, { expiresIn: "1h" });
+    // ob der benutzer im system befindet
+    const isExist = users.find(
+        (user) =>
+            user.username.toLowerCase() === validierung.username.toLowerCase()
+    );
+    if (isExist) {
+        return res.status(409).json({
+            message: "benutzer existiert schon andere name wählen !!",
+        });
+    }
+
+    users.push({
+        username: validierung.username,
+        password: validierung.password,
+    });
+    return res.status(201).json({
+        message: "Registrierung war erfolgreich :)",
+        username: validierung.username,
+    });
+});
+
+// login
+router.post("/login", (req, res) => {
+    const { username, password } = req.body;
+
+    const validierung = userPassInput(username, password);
+    if (!validierung.ok) {
+        return res.status(validierung.status).json({
+            message: validierung.message,
+        });
+    }
+
+    const user = users.find(
+        (user) =>
+            user.username.toLowerCase() === validierung.username.toLowerCase()
+    );
+    if (!user || user.password !== validierung.password) {
+        return res.status(401).json({
+            message: "Ungültige Zugangsdaten",
+        });
+    }
+
+    const token = jwt.sign({ username: user.username }, geheim, {
+        expiresIn: "1h",
+    });
+
     req.session.authorization = {
         accessToken: token,
-        username,
+        username: user.username,
     };
 
     return res.status(200).json({
-        message: "Anmelduung war erffolgreich",
+        message: "Anmeldung erfolgreich",
+        username: user.username,
         token,
-        username,
     });
 });
 

@@ -1,7 +1,7 @@
 {
     "name": "10_uebung",
     "version": "1.0.0",
-    "description": "**🎯 Projektidee: Online-Film-Bewertungsplattform (Movie Review API)**\r **Ziel:** Erstelle einen RESTful Webservice mit Node.js & Express, der Film-Informationen und Bewertungen verwaltet.",
+    "description": "**Aufgabe 1 — Basis-Setup**",
     "main": "index.js",
     "scripts": {
         "start": "nodemon index.js",
@@ -11,9 +11,6 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "express": "^5.1.0",
-        "express-session": "^1.18.2",
-        "jsonwebtoken": "^9.0.2",
-        "session": "^0.1.0"
+        "express-session": "^1.18.2"
     }
 }

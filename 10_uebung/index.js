@@ -1,17 +1,14 @@
 const express = require("express");
-const cors = require("cors");
 const session = require("express-session");
+const cros = require("cors");
 
-// 1) Middleware
-const { authenticated } = require("./middleware/auth");
+const auth_users = require("./router/auth_users");
+// const general = require("./router/general");
+const filmsDB = require("./router/filmsDB");
 
-// 2) Router (aus dem Ordner "router", nicht "routes")
-const authRouter = require("./router/auth_users"); // /auth
-const filmsRouter = require("./router/filmDB"); // /films
-const generalRouter = require("./router/general"); // /
-
-const app = express();
 const PORT = 5000;
+const app = express();
+
 app.use(
     session({
         secret: "test",
@@ -19,17 +16,13 @@ app.use(
         saveUninitialized: true,
     })
 );
-
-app.use(cors());
+app.use(cros());
 app.use(express.json());
 
-// öffentlich
-app.use("/auth", authRouter);
-app.use("/", generalRouter);
-
-// geschützt
-app.use("/films", authenticated, filmsRouter);
+app.use("/auth", auth_users);
+// app.use("/", general);
+app.use("/films", filmsDB);
 
 app.listen(PORT, () => {
-    console.log(`server läuft: http://localhost:${PORT}`);
+    console.log(`Server läuft an: http://localhost:${PORT}`);
 });
