@@ -31,12 +31,25 @@ const recipes = [
         tags: ["vegan", "breakfast", "quick"],
         ratings: [],
     },
+    {
+        id: "r3",
+        title: "test",
+        author: "alice",
+        time: 100,
+        ingredients: [
+            { name: "Brot", amount: "2 Scheiben" },
+            { name: "Avocado", amount: "1" },
+        ],
+        steps: ["Brot toasten.", "Avocado zerdrücken und würzen."],
+        tags: ["vegan", "breakfast", "quick"],
+        ratings: [],
+    },
 ];
 
 function avgRating(r) {
-    if (!r.rating.length) return 0;
-    const sum = r.ratings.reduce((spei, akt) => spei + akt);
-    return Math.round((sum / r.rating.length) * 10) / 10;
+    if (!r.ratings.length) return 0;
+    const sum = r.ratings.reduce((acc, x) => acc + Number(x.rating || 0), 0);
+    return Math.round((sum / r.ratings.length) * 10) / 10; // 1 Nachkommastelle
 }
 
 module.exports = { recipes, avgRating };
