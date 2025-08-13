@@ -53,7 +53,7 @@
     "C_Cpp_Runner.showCompilationTime": false,
     "C_Cpp_Runner.useLinkTimeOptimization": false,
     "C_Cpp_Runner.msvcSecureNoWarnings": false,
-    "editor.fontLigatures": false,
+    "editor.fontLigatures": "'calt', 'liga', 'clig'",
 
     "workbench.colorCustomizations": {
         "editor.background": "#1b1b2f",
