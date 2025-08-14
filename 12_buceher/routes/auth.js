@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const { users } = require("../data/seeds");
+const session = require("express-session");
 const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -67,6 +68,45 @@ router.post("/register", (req, res) => {
 });
 
 //=========================================================================
-router.post("/login", (req, res) => {});
+router.post("/login", (req, res) => {
+    const { username, password } = req.body;
+    const v = checkUserPasss(username, password);
+    if (!v) {
+        return res.status(valid.status).json({
+            message: valid.message,
+        });
+    }
 
+    const isExist = users.find(
+        (user) =>
+            user.username.toLowerCase() === username.toLowerCase() &&
+            user.password === password
+    );
+    if (!isExist) {
+        return res.status(404).json({
+            message: "Ungültige eingabe!!!",
+        });
+    }
+
+    const token = jwt.sign({ username: v.username }, JWT_SECRET, {
+        expiresIn: "1h",
+    });
+    req.session.authorization = {
+        accessToken: token,
+        username: v.username,
+    };
+    return res.status(200).json({
+        message: "Anmeldung war Erfolgreich...",
+        token,
+        username,
+    });
+});
+
+router.post("/logout", (req, res) => {
+    req.session.destroy(() => {
+        res.status(200).json({
+            message: "Sie sind abgemeldet",
+        });
+    });
+});
 module.exports = router;
