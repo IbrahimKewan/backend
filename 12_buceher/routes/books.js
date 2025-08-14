@@ -2,6 +2,7 @@ const express = require("express");
 const { users, books } = require("../data/seeds");
 const { type } = require("os");
 const { off } = require("process");
+const { authenticated } = require("../middleware/auth");
 const router = express.Router();
 
 router.get("/ping", (req, res) => {
@@ -84,6 +85,19 @@ router.get("/", (req, res) => {
     });
 });
 
+router.get("/pingo", authenticated, (req, res) => {
+    const username = req.user && req.user.username ? req.user.username : null;
+    if (!username) {
+        return res.status(401).json({
+            message: "Benutzername nicht gefunden",
+        });
+    }
+    return res.status(200).json({
+        message: "OK eingelogt",
+        username: username,
+    });
+});
+
 router.get("/:id", (req, res) => {
     const id = req.params.id;
 
@@ -99,4 +113,5 @@ router.get("/:id", (req, res) => {
         book,
     });
 });
+
 module.exports = router;

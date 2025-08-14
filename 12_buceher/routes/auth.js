@@ -88,12 +88,12 @@ router.post("/login", (req, res) => {
         });
     }
 
-    const token = jwt.sign({ username: v.username }, JWT_SECRET, {
+    const token = jwt.sign({ username: username.trim() }, JWT_SECRET, {
         expiresIn: "1h",
     });
     req.session.authorization = {
         accessToken: token,
-        username: v.username,
+        username: username,
     };
     return res.status(200).json({
         message: "Anmeldung war Erfolgreich...",
