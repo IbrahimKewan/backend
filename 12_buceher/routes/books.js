@@ -1,14 +1,10 @@
 const express = require("express");
 const { users, books } = require("../data/seeds");
-const { type } = require("os");
-const { off } = require("process");
 const { authenticated } = require("../middleware/auth");
 const router = express.Router();
 
 router.get("/ping", (req, res) => {
-    return res.status(200).json({
-        message: "pong",
-    });
+    return res.status(200).json({ message: "pong" });
 });
 
 router.get("/", (req, res) => {
@@ -21,29 +17,37 @@ router.get("/", (req, res) => {
         );
     };
 
-    if (has(title)) {
-        results = filtering("title", title);
-    }
-    if (has(author)) {
-        results = filtering("author", author);
-    }
+    if (has(title)) results = filtering("title", title);
+    if (has(author)) results = filtering("author", author);
     if (has(tag)) {
-        results = results.filter((book) => {
-            const b = book.tags;
-            for (let index = 0; index < b.length; index++) {
-                if (b[index].toLowerCase().includes(tag)) {
-                    return b[index];
-                }
-            }
-        });
+        results = results.filter((book) =>
+            book.tags.some((t) => t.toLowerCase().includes(tag.toLowerCase()))
+        );
     }
-    if (has(year)) {
+    if (has(year))
         results = results.filter((book) => book.year === Number(year));
+
+    if (has(sort)) {
+        if (sort === "year") {
+            results = results.sort((a, b) =>
+                has(order) && order === "desc"
+                    ? b.year - a.year
+                    : a.year - b.year
+            );
+        }
+        if (sort === "title") {
+            results = results.sort((a, b) =>
+                has(order) && order === "desc"
+                    ? b.title.localeCompare(a.title)
+                    : a.title.localeCompare(b.title)
+            );
+        }
     }
 
     const lim = Math.min(Number(limit) || 20, 50);
     const off = Math.max(Number(offset) || 0, 0);
-    results = results.slice(off, off + lim);
+    const paged = results.slice(off, off + lim);
+
     if (
         has(title) ||
         has(author) ||
@@ -52,36 +56,18 @@ router.get("/", (req, res) => {
         has(offset) ||
         has(year)
     ) {
-        if (results.length <= 0) {
-            return res.status(403).json({
-                message: "kein Daten gefunden FILTER",
+        if (paged.length <= 0) {
+            return res.status(404).json({
+                message: "Kein Daten gefunden FILTER",
+                errorCode: 404,
             });
-        }
-    }
-    if (has(sort)) {
-        if (sort === "year") {
-            if (has(order) && order === "desc") {
-                results = results.sort((a, b) => b.year - a.year);
-            } else {
-                results = results.sort((a, b) => a.year - b.year);
-            }
-        }
-        if (sort === "title") {
-            if (has(order) && order === "desc") {
-                results = results.sort((a, b) =>
-                    b.title.localeCompare(a.title)
-                );
-            } else {
-                results = results.sort((a, b) =>
-                    a.title.localeCompare(b.title)
-                );
-            }
         }
     }
 
     return res.status(200).json({
         message: "OK",
-        books: results,
+        results: paged,
+        total: results.length,
     });
 });
 
@@ -90,43 +76,37 @@ router.get("/pingo", authenticated, (req, res) => {
     if (!username) {
         return res.status(401).json({
             message: "Benutzername nicht gefunden",
+            errorCode: 401,
         });
     }
     return res.status(200).json({
         message: "OK eingelogt",
-        username: username,
+        data: { username },
     });
 });
 
 function getBookById(id) {
-    if (!id.includes("b")) {
-        id = `b${id}`;
-    }
+    if (!id.includes("b")) id = `b${id}`;
     const book = books.find((b) => b.id === id);
     const index = books.findIndex((b) => b.id === id);
-    let status, message;
-
     if (!book) {
-        message = `Buch ID:${id} nicht gefunden`;
-        status = 404;
-        return { status, message };
+        return { status: 404, message: `Buch ID:${id} nicht gefunden` };
     }
     return { status: 200, index, book, id };
 }
 
 router.get("/:id", (req, res) => {
     const id = req.params.id;
-
     const v = getBookById(id);
     if (v.status !== 200) {
         return res.status(v.status).json({
             message: v.message,
+            errorCode: v.status,
         });
     }
-
-    return res.status(v.status).json({
+    return res.status(200).json({
         message: "OK",
-        book: v.book,
+        data: v.book,
     });
 });
 
@@ -136,11 +116,8 @@ router.post("/", authenticated, (req, res) => {
 
     if (!has(title) || !has(author) || !year || !tags) {
         return res.status(400).json({
-            message: "Alle Felder eingeben ",
-            title,
-            author,
-            year,
-            tags,
+            message: "Alle Felder eingeben",
+            errorCode: 400,
         });
     }
 
@@ -149,13 +126,14 @@ router.post("/", authenticated, (req, res) => {
             book.author === author && book.year === year && book.title === title
     );
     if (isExist) {
-        return res.status(403).json({
-            message: "Diese Buch ist schon existiert !!!",
-            book: isExist,
+        return res.status(409).json({
+            message: "Dieses Buch existiert bereits!",
+            errorCode: 409,
+            data: isExist,
         });
     }
-    const book = books.map((b) => b.id.substring(1, 99));
-    let maxID = Math.max(...book) + 1;
+    const bookIds = books.map((b) => Number(b.id.substring(1)));
+    let maxID = Math.max(...bookIds) + 1;
     maxID = `b${maxID}`;
     const newBook = {
         id: maxID,
@@ -163,12 +141,13 @@ router.post("/", authenticated, (req, res) => {
         author,
         year,
         tags,
+        reviews: [],
     };
     books.push(newBook);
 
     return res.status(201).json({
         message: "Buch wurde erfolgreich hinzugefügt :)",
-        book: newBook,
+        data: newBook,
     });
 });
 
@@ -180,148 +159,130 @@ router.put("/:id", authenticated, (req, res) => {
     if (v.index < 0) {
         return res.status(v.status).json({
             message: v.message,
+            errorCode: v.status,
         });
     }
 
-    const index = v.index;
-    books[index].title = title;
-    books[index].author = author;
-    books[index].year = year;
-    books[index].tags = tags;
+    books[v.index].title = title;
+    books[v.index].author = author;
+    books[v.index].year = year;
+    books[v.index].tags = tags;
 
-    return res.status(v.status).json({
+    return res.status(200).json({
         message: "OK",
-        book: books[index],
+        data: books[v.index],
     });
 });
 
 router.delete("/:id", authenticated, (req, res) => {
     let id = req.params.id;
-
     const v = getBookById(id);
     if (v.index < 0) {
         return res.status(v.status).json({
             message: v.message,
+            errorCode: v.status,
         });
     }
-
     books.splice(v.index, 1);
-    return res.status(v.status).json({
+    return res.status(200).json({
         message: `Buch mit ID: ${id} wurde erfolgreich gelöscht :)`,
     });
 });
 
 router.post("/:id/reviews", authenticated, (req, res) => {
-    const { user, rating, comment } = req.body;
+    const { rating, comment } = req.body;
     const id = req.params.id;
-
     const v = getBookById(id);
     if (v.index < 0) {
         return res.status(v.status).json({
             message: v.message,
+            errorCode: v.status,
         });
     }
-
     const username = req.user.username;
     const has = (p) => typeof p === "string" && p.trim() !== "";
     if (!rating || !has(comment)) {
-        return res.status(404).json({
-            message: "Bewertung und kommintare sind pflicht felder !!!",
+        return res.status(400).json({
+            message: "Bewertung und Kommentar sind Pflichtfelder!",
+            errorCode: 400,
         });
     }
-
     if (rating < 0 || rating > 10) {
         return res.status(400).json({
-            message: "Bewertungsberiech [0 ... 10]",
+            message: "Bewertungsbereich [0 ... 10]",
+            errorCode: 400,
         });
     }
-
-    const book = books.find((b) => b.id === v.id);
+    const book = books[v.index];
     const review = book.reviews.find((r) => r.user === username);
     if (review) {
         return res.status(409).json({
-            message: "Sie haben schon für dieses Buch Bewertung abgegeben ",
+            message: "Sie haben schon für dieses Buch bewertet.",
+            errorCode: 409,
         });
     }
-
-    book.reviews.push({
-        user: username,
-        rating,
-        comment,
-    });
-    // books.push(book);
+    book.reviews.push({ user: username, rating, comment });
     return res.status(200).json({
-        message: "Sie haben Ihre Bwertung erfolgreich abgebgeben",
-        book: book,
+        message: "Sie haben Ihre Bewertung erfolgreich abgegeben",
+        data: book,
     });
 });
 
 router.put("/:id/reviews", authenticated, (req, res) => {
-    const { user, rating, comment } = req.body;
+    const { rating, comment } = req.body;
     const id = req.params.id;
-
     const v = getBookById(id);
     if (v.index < 0) {
         return res.status(v.status).json({
             message: v.message,
+            errorCode: v.status,
         });
     }
-
     const username = req.user.username;
-
     if (rating < 0 || rating > 10) {
         return res.status(400).json({
-            message: "Bewertungsberiech [0 ... 10]",
+            message: "Bewertungsbereich [0 ... 10]",
+            errorCode: 400,
         });
     }
-
-    const book = books.find((b) => b.id === v.id);
-    const review = book.reviews.find((r) => r.user === username);
-    if (!review) {
+    const book = books[v.index];
+    const reviewIndex = book.reviews.findIndex((r) => r.user === username);
+    if (reviewIndex === -1) {
         return res.status(409).json({
-            message: "Sie haben kein bewertung für dieses Buch abgegeben ",
+            message: "Sie haben keine Bewertung für dieses Buch abgegeben.",
+            errorCode: 409,
         });
     }
-
-    const ReIndex = book.reviews.findIndex((r) => r.user === username);
-    book.reviews.splice(ReIndex, 1);
-
-    book.reviews[ReIndex] = {
-        user: username,
-        rating,
-        comment,
-    };
+    book.reviews[reviewIndex] = { user: username, rating, comment };
     return res.status(200).json({
-        message: "Sie haben Ihre Bwertung erfolgreich abgebgeben",
-        book: book,
+        message: "Sie haben Ihre Bewertung erfolgreich aktualisiert",
+        data: book,
     });
 });
 
 router.delete("/:id/reviews", authenticated, (req, res) => {
     const id = req.params.id;
     const username = req.user.username;
-
     const v = getBookById(id);
     if (v.index < 0) {
         return res.status(v.status).json({
             message: v.message,
+            errorCode: v.status,
         });
     }
-
-    const book = books.find((b) => b.id === v.id);
-    const review = book.reviews.find((r) => r.user === username);
-    if (!review) {
+    const book = books[v.index];
+    const reviewIndex = book.reviews.findIndex((r) => r.user === username);
+    if (reviewIndex === -1) {
         return res.status(409).json({
-            message: "Sie haben kein bewertung für dieses Buch abgegeben ",
+            message: "Sie haben keine Bewertung für dieses Buch abgegeben.",
+            errorCode: 409,
         });
     }
-
-    const ReIndex = book.reviews.findIndex((r) => r.user === username);
-    book.reviews.splice(ReIndex, 1);
-
+    book.reviews.splice(reviewIndex, 1);
     return res.status(200).json({
-        message: "Sie haben Ihre Bwertung erfolgreich gelöscht",
-        book: book,
+        message: "Sie haben Ihre Bewertung erfolgreich gelöscht",
+        data: book,
     });
 });
+
 module.exports = router;
