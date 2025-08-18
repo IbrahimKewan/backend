@@ -2,6 +2,7 @@ const request = require("supertest");
 const app = require("../app");
 const { users, books } = require("../data/seeds");
 const { log } = require("console");
+const { subscribe } = require("diagnostics_channel");
 
 let login = async () => {
     const user = "ibrahim";
@@ -79,5 +80,7 @@ describe("POST books", () => {
                 tags: ["test2222", "test3333"],
             });
         expect(res.body.data.id).toEqual("b11");
+        expect(res.body.data.id.substring(1, 11)).toBe(`${books.length}`);
+        expect(typeof res.body.data.id).toEqual("string");
     });
 });
