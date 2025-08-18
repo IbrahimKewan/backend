@@ -1,7 +1,6 @@
 const request = require("supertest");
 const app = require("../app");
 const { users, books } = require("../data/seeds");
-const { ADDRGETNETWORKPARAMS } = require("dns");
 
 let login = async () => {
     const user = "ibrahim";
@@ -119,11 +118,30 @@ describe("POST books", () => {
             "Sie haben Ihre Bewertung erfolgreich abgegeben"
         );
         expect(res.body.data.id).toEqual("b6");
-        console.log(res.body.data);
-        const reviewUser = books.reviews.findIndex((r) => r.user === user);
-        expect(res.body.data.reviews[reviewUser]).toEqual({
+        const book = books.find((b) => b.id === "b6");
+        const reviewUser = book.reviews.find((r) => r.user === "ibrahim");
+        // console.log(reviewUser);
+        expect(reviewUser).toEqual({
+            user: "ibrahim",
             rating: 3,
             comment: "TESTETSETSET",
         });
+    });
+
+    it("should put/update reviews bei id", async () => {
+        const token = await login();
+
+        const res = await request(app)
+            .put("/books/b6/reviews")
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                rating: 5,
+            });
+
+        expect(res.status).toBe(200);
+        expect(res.body.message).toEqual(
+            "Sie haben Ihre Bewertung erfolgreich aktualisiert"
+        );
+        expect(res.body.data.id).toEqual("b6");
     });
 });

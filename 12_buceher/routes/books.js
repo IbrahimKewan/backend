@@ -237,7 +237,7 @@ router.post("/:id/reviews", authenticated, (req, res) => {
 });
 
 router.put("/:id/reviews", authenticated, (req, res) => {
-    const { rating, comment } = req.body;
+    let { rating, comment } = req.body;
     const id = req.params.id;
     const v = getBookById(id);
     if (v.index < 0) {
@@ -261,6 +261,15 @@ router.put("/:id/reviews", authenticated, (req, res) => {
             errorCode: 409,
         });
     }
+    if (!rating || rating <= 0) {
+        rating = book.reviews[reviewIndex].rating;
+    }
+
+    // Korrektur: Nur trimmen, wenn comment ein String ist
+    if (typeof comment !== "string" || comment.trim() === "") {
+        comment = book.reviews[reviewIndex].comment;
+    }
+
     book.reviews[reviewIndex] = { user: username, rating, comment };
     return res.status(200).json({
         message: "Sie haben Ihre Bewertung erfolgreich aktualisiert",
