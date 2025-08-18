@@ -17,17 +17,25 @@ const JWT_SECRET = process.env.JWT_SECRET;
  * @returns {object} {ok: true/false, username: user, password: pass}
  */
 function checkUserPasss(username, password) {
-    const u = typeof username === "string" && username.trim() !== "";
-    const p = typeof password === "string" && password.trim() !== "";
+    const u = typeof username === "string" ? username.trim() : "";
+    const p = typeof password === "string" ? password.trim() : "";
 
-    if (!u || u.length < 4) {
+    if (u.length === 0 && p.length === 0) {
+        return {
+            ok: false,
+            status: 400,
+            message: "Benutzername und Password sind erfoderlich!!!",
+        };
+    }
+
+    if (u.length < 4) {
         return {
             ok: false,
             status: 400,
             message: "Benutzername (min. 4) erforderlich",
         };
     }
-    if (!p || p.length < 6) {
+    if (p.length < 6) {
         return {
             ok: false,
             status: 400,
@@ -42,7 +50,7 @@ router.post("/register", (req, res) => {
     const { username, password } = req.body;
 
     const valid = checkUserPasss(username, password);
-    if (!valid) {
+    if (!valid.ok) {
         return res.status(valid.status).json({
             message: valid.message,
         });

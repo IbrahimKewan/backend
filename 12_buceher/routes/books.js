@@ -7,7 +7,7 @@ router.get("/ping", (req, res) => {
     return res.status(200).json({ message: "pong" });
 });
 
-router.get("/", (req, res) => {
+router.get("/", authenticated, (req, res) => {
     const { title, author, tag, year, limit, offset, sort, order } = req.query;
     let results = books;
     const has = (v) => typeof v === "string" && v.trim() !== "";

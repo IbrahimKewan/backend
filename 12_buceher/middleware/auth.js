@@ -2,7 +2,11 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "dev_jwt";
 
 function authenticated(req, res, next) {
-    const token = req.session?.authorization?.accessToken;
+    let token = req.session?.authorization?.accessToken;
+    if (!token) {
+        const authHeader = req.headers.authorization;
+        token = authHeader && authHeader.split(" ")[1];
+    }
     if (!token) {
         return res.status(401).json({
             message: "Nicht eingelogt !!!",
