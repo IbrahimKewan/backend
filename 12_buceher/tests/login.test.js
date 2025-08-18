@@ -1,7 +1,6 @@
 const request = require("supertest");
 const app = require("../app");
 const { users } = require("../data/seeds");
-const { log } = require("console");
 
 describe("POST login", () => {
     const user = "ibrahim";
@@ -47,4 +46,18 @@ describe("POST login", () => {
         expect(loging.statusCode).toBe(404);
         expect(loging.body.message).toEqual("Ungültige eingabe!!!");
     });
+
+    // it("should block after 5 time login", async () => {
+    //     let res;
+    //     for (let index = 0; index < 6; index++) {
+    //         res = await request(app).post("/auth/login").send({
+    //             username: user,
+    //             password: "falschesPasswort",
+    //         });
+    //     }
+    //     expect(res.body.message).toEqual(
+    //         "Zu viele Login-Versuche, bitte warte kurz."
+    //     );
+    //     expect(res.body.errorCode).toBe(429);
+    // });
 });

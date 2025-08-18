@@ -163,10 +163,18 @@ router.put("/:id", authenticated, (req, res) => {
         });
     }
 
-    books[v.index].title = title;
-    books[v.index].author = author;
-    books[v.index].year = year;
-    books[v.index].tags = tags;
+    if (typeof title === "string" && title.trim() !== "") {
+        books[v.index].title = title;
+    }
+    if (typeof author === "string" && author.trim() !== "") {
+        books[v.index].author = author;
+    }
+    if (typeof year !== "undefined" && year !== null) {
+        books[v.index].year = year;
+    }
+    if (typeof tags !== "undefined" && tags !== null) {
+        books[v.index].tags = tags;
+    }
 
     return res.status(200).json({
         message: "OK",

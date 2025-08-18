@@ -79,9 +79,9 @@ router.post("/register", (req, res) => {
 router.post("/login", (req, res) => {
     const { username, password } = req.body;
     const v = checkUserPasss(username, password);
-    if (!v) {
-        return res.status(valid.status).json({
-            message: valid.message,
+    if (!v.ok) {
+        return res.status(v.status).json({
+            message: v.message,
         });
     }
 
@@ -96,7 +96,7 @@ router.post("/login", (req, res) => {
         });
     }
 
-    const token = jwt.sign({ username: username.trim() }, JWT_SECRET, {
+    const token = jwt.sign({ username: username }, JWT_SECRET, {
         expiresIn: "1h",
     });
     req.session.authorization = {
